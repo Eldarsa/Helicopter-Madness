@@ -3,18 +3,32 @@ package com.mygdx.helicopter_madness.sprites;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector3;
 import com.mygdx.helicopter_madness.HelicopterMadness;
+import com.badlogic.gdx.graphics.g2d.Animation;
 
 public class Helicopter {
+
     private Vector3 pos;
     private Vector3 vel;
-    private Texture helicopter;
     private boolean flipX;
+    private Texture frame;
+    private float statetime;
 
-    public Helicopter(int posX, int posY, int velX, int velY){
+    private Animation<Texture> helicopter;
+    private Texture[] keyframes = {
+            new Texture("heli1.png"),
+            new Texture("heli2.png"),
+            new Texture("heli3.png"),
+            new Texture("heli4.png")};
+
+    public Helicopter(int posX, int posY, int velX, int velY, float framerate){
         pos = new Vector3(posX, posY, 0);
         vel = new Vector3(velX, velY, 0);
-        helicopter = new Texture("attackhelicopter.PNG");
         flipX = true;
+        statetime = 0;
+
+        helicopter = new Animation<Texture>(framerate, keyframes);
+        helicopter.setPlayMode(Animation.PlayMode.LOOP);
+        frame = helicopter.getKeyFrame(statetime);
     }
 
     private void setVelAndPos(float velX, float velY, float dt){
@@ -25,25 +39,30 @@ public class Helicopter {
     }
 
     public void update(float dt){
+
+        //Get animation texture here
+        statetime +=dt;
+        frame = helicopter.getKeyFrame(statetime);
+
         if (pos.x <= 0){
             setVelAndPos(20, vel.y, dt);
             flipX = true;
         }
-        else if (pos.x >= (HelicopterMadness.WIDTH - helicopter.getWidth())){
+        else if (pos.x >= (HelicopterMadness.WIDTH - frame.getWidth())){
             setVelAndPos(-20, vel.y, dt);
             flipX = false;
         }
-        else if (pos.x > 0 && pos.x < (HelicopterMadness.WIDTH - helicopter.getWidth())) {
+        else if (pos.x > 0 && pos.x < (HelicopterMadness.WIDTH - frame.getWidth())) {
             setVelAndPos(vel.x, vel.y, dt);
         }
 
         if (pos.y <= 0){
             setVelAndPos(vel.x, 25, dt);
         }
-        else if (pos.y >= (HelicopterMadness.HEIGHT - helicopter.getHeight())){
+        else if (pos.y >= (HelicopterMadness.HEIGHT - frame.getHeight())){
             setVelAndPos(vel.x, -25, dt);
         }
-        else if (pos.y > 0 && pos.y < (HelicopterMadness.HEIGHT - helicopter.getHeight())) {
+        else if (pos.y > 0 && pos.y < (HelicopterMadness.HEIGHT - frame.getHeight())) {
             setVelAndPos(vel.x, vel.y, dt);
         }
     }
@@ -53,7 +72,7 @@ public class Helicopter {
     }
 
     public Texture getTexture() {
-        return helicopter;
+        return frame;
     }
 
     public boolean isFlipX() {
@@ -61,7 +80,7 @@ public class Helicopter {
     }
 
     public void dispose() {
-        helicopter.dispose();
+        frame.dispose();
     }
 
 }

@@ -9,13 +9,15 @@ import com.mygdx.helicopter_madness.sprites.Helicopter;
 import com.mygdx.helicopter_madness.sprites.Infobox;
 
 public class PlayState extends State{
+
     private Helicopter helicopter;
+    private float helifrate = 0.1f; //seconds
     private Infobox infobox;
     BitmapFont font;
 
     protected PlayState(GameStateManager gsm) {
         super(gsm);
-        helicopter = new Helicopter(100, 100, 20, 25);
+        helicopter = new Helicopter(100, 100, 20, 25, helifrate);
         infobox = new Infobox(20,HelicopterMadness.HEIGHT - 20, 1f);
         font = new BitmapFont();
         font.getData().setScale(infobox.getFontsize()); //Set fontsize
