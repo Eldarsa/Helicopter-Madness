@@ -6,21 +6,17 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.mygdx.helicopter_madness.HelicopterMadness;
 import com.mygdx.helicopter_madness.sprites.Helicopter;
-import com.mygdx.helicopter_madness.sprites.Infobox;
+import java.util.Random;
 
 public class PlayState extends State{
 
-    private Helicopter helicopter;
-    private float helifrate = 0.1f; //seconds
-    private Infobox infobox;
-    BitmapFont font;
+    private Helicopter[] helicopters;
+    private int amount;
 
     protected PlayState(GameStateManager gsm) {
         super(gsm);
-        helicopter = new Helicopter(100, 100, 20, 25, helifrate);
-        infobox = new Infobox(20,HelicopterMadness.HEIGHT - 20, 1f);
-        font = new BitmapFont();
-        font.getData().setScale(infobox.getFontsize()); //Set fontsize
+        amount = 5;
+        generateHelicopters(amount, 10, 50);
     }
 
     @Override
@@ -31,32 +27,89 @@ public class PlayState extends State{
     @Override
     public void update(float dt) {
         handleInput();
-        helicopter.update(dt);
-        infobox.update(helicopter.getPos());
+
+        //Update helicopter objects
+
+        updateHelicopters(dt);
     }
 
     @Override
     public void render(SpriteBatch sb) {
         sb.begin();
-        sb.draw(helicopter.getTexture(),
-                helicopter.getPos().x,
-                helicopter.getPos().y,
-                helicopter.getTexture().getWidth(),
-                helicopter.getTexture().getHeight(),
-                0, 0,
-                helicopter.getTexture().getWidth(),
-                helicopter.getTexture().getHeight(),
-                helicopter.isFlipX(), false);
-        //sb.draw(helicopter.getTexture(), helicopter.getPos().x, helicopter.getPos().y, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, helicopter.isFlipX(), false)
-        font.draw(sb, infobox.getText(),
-                infobox.getTextPos().x,
-                infobox.getTextPos().y);
+        for(Helicopter heli: helicopters){
+            sb.draw(heli.getTexture(),
+                    heli.getPos().x,
+                    heli.getPos().y,
+                    heli.getTexture().getWidth(),
+                    heli.getTexture().getHeight(),
+                    0, 0,
+                    heli.getTexture().getWidth(),
+                    heli.getTexture().getHeight(),
+                    heli.isFlipX(), false);
+        }
         sb.end();
     }
 
     @Override
     public void dispose() {
-        helicopter.dispose();
+        for(Helicopter helicopter: helicopters){
+            helicopter.dispose();
+        }
     }
+
+    private void generateHelicopters(int amount, int minInitVel, int maxInitVel) {
+
+        helicopters = new Helicopter[amount]; //Create array with 'amount' helicopters
+
+        Helicopter ignoreHeli = new Helicopter(0,0,0,0);
+        int width = ignoreHeli.getWidth();
+        int height = ignoreHeli.getHeight();
+        ignoreHeli.dispose();
+
+        int imWidth = HelicopterMadness.WIDTH;
+        int imHeight = HelicopterMadness.HEIGHT;
+        int widthInterval = (int) imWidth / amount;
+        int heightInterval = (int) imHeight / amount;
+
+        int velX;
+        int velY;
+        Random rand = new Random();
+
+        for (int i = 0; i < amount; i++) {
+
+            velX = rand.nextInt(maxInitVel - minInitVel) + minInitVel;
+            velY = rand.nextInt(maxInitVel - minInitVel) + minInitVel;
+
+            helicopters[i] = new Helicopter(
+                    i*widthInterval,
+                    i*heightInterval,
+                    velX,
+                    velY);
+        }
+    } //End generateHelicopters();
+
+    private void updateHelicopters(float dt) {
+
+        //Set collisionStatus
+        for(int i = 0; i < helicopters.length; i++) {
+            for(int j = 0; j < helicopters.length; j++) {
+                if(j == i) {
+                    continue;
+                }else{
+                    if(helicopters[i].getBoundingRectangle().overlaps(
+                            helicopters[j].getBoundingRectangle())) {
+                        helicopters[i].setCollisionStatus(true);
+                        break;
+                    }else{
+                        helicopters[i].setCollisionStatus(false);
+                    }
+                }
+            }
+        }
+
+        for(Helicopter heli: helicopters){
+            heli.update(dt);
+        }
+    } //End updateHelicopters();
 
 }
