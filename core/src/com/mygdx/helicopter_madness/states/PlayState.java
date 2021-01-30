@@ -45,6 +45,12 @@ public class PlayState extends State{
         handleInput();
         for (Helicopter h : helicopters) {
             h.update(dt);
+            for (Helicopter h1: helicopters){
+                if (h == h1){
+                    continue;
+                }
+                h.detectCollision(h1);
+            }
         }
 
 //        for (int i = 0; i < helicopters.length; i++) {
