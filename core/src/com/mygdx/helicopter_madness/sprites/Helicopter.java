@@ -78,22 +78,11 @@ public class Helicopter {
     }
 
     public void detectCollision(Helicopter helicopter){
-//        helicopter.vel.x = -helicopter.vel.x;
-//        helicopter.vel.y = -helicopter.vel.y;
-
+        // Naive solution, does not consider where helicopter hits and return vel
         if (helicopter.bounds.overlaps(this.bounds)){
             this.vel.x = -this.vel.x;
             this.vel.y = -this.vel.y;
         }
-
-//        for (Helicopter h : helicopters) {
-//            if (h.bounds.overlaps(this.bounds)){
-//                h.vel.x = -h.vel.x;
-//                h.vel.y = -h.vel.y;
-//                this.vel.x = -this.vel.x;
-//                this.vel.y = -this.vel.y;
-//            }
-//        }
     }
 
     public Vector3 getPos() {
