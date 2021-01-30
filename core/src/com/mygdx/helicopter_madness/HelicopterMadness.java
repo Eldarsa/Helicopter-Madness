@@ -8,7 +8,7 @@ import com.mygdx.helicopter_madness.states.GameStateManager;
 import com.mygdx.helicopter_madness.states.MenuState;
 
 public class HelicopterMadness extends ApplicationAdapter {
-	public static final int WIDTH = 480;  // Change to fit phone
+	public static final int WIDTH = 1000;  // Change to fit phone
 	public static final int HEIGHT = 700;
 
 	public static final String TITLE = "Helicopter madness";
